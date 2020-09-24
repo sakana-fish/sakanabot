@@ -30,7 +30,7 @@ gc = gspread.authorize(credentials)
 wb = gc.open_by_key(sheet)
 ws = wb.worksheet("挙手管理") 
 
-botid=619351049752543234 #fishのid
+botid=758555841296203827 #sakanabotのid
 
 client = commands.Bot(command_prefix='.')
 @client.event
