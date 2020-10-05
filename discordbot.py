@@ -29,6 +29,7 @@ credentials = ServiceAccountCredentials.from_json_keyfile_dict(credential, scope
 gc = gspread.authorize(credentials)
 wb = gc.open_by_key(sheet)
 ws = wb.worksheet("挙手管理") 
+ws2 = wb.worksheet("メモ")
 
 botid=758555841296203827 #sakanabotのid
 
@@ -49,9 +50,85 @@ async def suse(ctx): #.sの説明
     
     
 @client.command()
-async def fish(ctx2, about = "🐟🐟🐟 使い方 🐟🐟🐟"):
-  help1 = discord.Embed(title=about,color=0xe74c3c,description=".s,.s2: 交流戦募集開始※再び.s .s2することでリセット 英語スタンプ→挙手 ×スタンプ→挙手全へ\n.list <時間>: 指定時間に挙手した人を返す\n.mention <時間>: 指定時間に挙手した人にメンション\n.cal: 即時集計。順位は16進数でも入力可、recallで呼び戻し、endで終了、backで一回分だけ修正可能\n.ran 数字: ランダムに数字出力\n.dev 数字 リスト: 組み分け\n.choose リスト: 選択\n.vote: 匿名アンケート(2択)\n作成者: さかな(@sakana8dx)\nさかなBot導入: https://discord.com/oauth2/authorize?client_id=619351049752543234&permissions=473152&scope=bot")
-  await ctx2.send(embed=help1)       
+async def fish(ctx, about = "🐟🐟🐟 使い方 🐟🐟🐟"):
+  help1 = discord.Embed(title=about,color=0xe74c3c,description=".s: 交流戦募集開始※再び.sすることでリセット 英語スタンプ→の/へ\n.suse: .sの使い方\n.list <時間>: 指定時間に挙手した人の名前\n.mention <時間>: 指定時間に挙手した人にメンション\n.cal: 即時集計。順位は16進数でも入力可、recallで呼び戻し、endで終了、backで一回分だけ修正可能\n.set <数字>: メモ登録\n/memo <数字 or 登録名>: メモ呼び出し\n.ran <数字>: ランダムに数字出力\n.div <数字> <リスト...>: 組み分け\n.choose <リスト...>: 選択\n.vote: 匿名アンケート(2択)\n作成者: さかな(@sakana8dx)\nさかなBot導入: )
+  await ctx.send(embed=help1)       
+
+#-----------------------------------------------------
+
+@client.command()
+async def set(ctx,n): 
+    def check(m):
+        return m.author.id == ctx.author.id
+    def check2(m):
+        try:
+            m=int(m)
+        except ValueError:
+            return False
+        else:
+            if m>0 and m<11:
+                return True
+            else:
+                return False
+
+    if check2(n)==True:
+        n=int(n)        
+        a=str(ctx.guild.id)
+        try:
+            list=ws2.col_values(1)
+            row=list.index(a)+1
+        except:
+            ws2.append_row([str(ctx.guild.id)])
+            list=ws2.col_values(1)
+            row=list.index(a)+1
+            ws2.update_cell(row,22,0)
+        
+        await ctx.send('名前を入力してください')
+        msg = await client.wait_for('message',check=check)
+        await ctx.send('内容を入力してください')
+        msg2 = await client.wait_for('message',check=check)
+        ws2.update_cell(row,2*n,msg.content)
+        ws2.update_cell(row,2*n+1,msg2.content)
+        await ctx.send('登録が完了しました')
+     
+    else:
+        await ctx.send('1~10の数字を入力してください (.set <数字>)')
+      
+#-----------------------------------------------------
+
+@client.command()
+async def memo(ctx,n): 
+    def check2(m):
+        try:
+            m=int(m)
+        except ValueError:
+            return False
+        else:
+            if m>0 and m<11:
+                return True
+            else:
+                return False
+    a=str(ctx.guild.id)
+    list=ws2.col_values(1)
+    row=list.index(a)+1
+    b=ws2.row_values(row)
+    if n=='all':
+        text=''
+        for i in range(10):
+            text=f'{text}memo{i+1} {b[2*i+1]}: {b[2*i+2]}\n'
+        await ctx.send(text)
+    elif check2(n)==True:
+        if b[2*int(n)]!='':
+            await ctx.send(b[2*int(n)])
+        else:
+            await ctx.send(f'メモ{n}は未登録です')    
+    elif n in b:
+        n=b.index(n)+1
+        await ctx.send(b[n])
+    else:
+        await ctx.send('未登録の内容です')
+        
+#-----------------------------------------------------  
  
 
 @client.command()
@@ -67,7 +144,7 @@ async def choose(ctx,*args):
 
     
 @client.command()
-async def dev(ctx,*args):
+async def div(ctx,*args):
   a=int(args[0])
   b=len(args)-1
   c=b%a
@@ -540,68 +617,7 @@ async def on_raw_reaction_add(payload):
                 else:
                     msg2=await channel.send(f"20@{b[16]} 21@{b[17]} 22@{b[18]} 23@{b[19]} 24@{b[20]} 25@{b[21]} 26@{b[22]}")
                 ws.update_cell(row,25,str(msg2.id))    
-                
-@client.command()
-async def rec(ctx1, about, cnt, settime2):
-    cnt, settime2 = int(cnt), float(settime2)
-    settime2 = 60*settime2
-    #print(ctx1.author.name)
-    recruiter = ctx1.author.name
-    print(recruiter)	
-    list = [">"]
-    list.append(ctx1.author.name)
-    mem = []
-    mem.append(ctx1.author.mention)
-    test2 = discord.Embed(title=about,colour=0xe74c3c)
-    test2.add_field(name=f"@{cnt} ", value=' '.join(list), inline=False)
-    msg2 = await ctx1.send(embed=test2)
-    await msg2.add_reaction('🐟')
-    await msg2.add_reaction('✖')
-    await msg2.add_reaction('👋')
-     
-    def check(reaction, user):
-        emoji = str(reaction.emoji)
-        if user.bot == True:    # botは無視
-            pass
-        else:
-            return emoji
-
-    while len(list)-1 <= 100:
-        try:
-            reaction, user = await client.wait_for('reaction_add', timeout=settime2, check=check)
-        except asyncio.TimeoutError:
-            await msg2.delete()
-            break
-        else:
-            if msg2.id == reaction.message.id:
-                if str(reaction.emoji) == '🐟':
-                    list.append(user.name)
-                    mem.append(user.mention)
-                    cnt -= 1
-                    if cnt == 0:
-                        member = ' '.join(mem)
-                        test2 = discord.Embed(title=about,colour=0xe74c3c)
-                        test2.add_field(name=f"@{cnt} ", value=' '.join(list), inline=False)
-                        await msg2.edit(embed=test2)
-                        await msg2.remove_reaction(str(reaction.emoji), user)
-                        await ctx1.send("〆 {}".format(member))  
-                        break
-                if str(reaction.emoji) == '✖':
-                    if user.name in list:
-                        list.remove(user.name)
-                        mem.remove(user.mention)
-                        cnt += 1
-                if str(reaction.emoji) == '🥺': 
-                    if user.name == recruiter:
-                      await msg2.delete()
-                      break
-                  
-                test2 = discord.Embed(title=about,colour=0xe74c3c)
-                test2.add_field(name=f"@{cnt} ", value=' '.join(list), inline=False)
-                await msg2.edit(embed=test2)
-                # リアクション消す。メッセージ管理権限がないとForbidden:エラーが出ます。
-                await msg2.remove_reaction(str(reaction.emoji), user)
-                
+                 
 #-----------------------------------------------------    
 @client.command()
 async def mt(ctx): #ラウンジの集計
@@ -631,6 +647,7 @@ async def mt(ctx): #ラウンジの集計
                 break
             else:
                 score=score.content
+                score=score.replace('+','%2B')                
                 score=score.split()
                 if len(score)==12:
                     ok=1
