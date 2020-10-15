@@ -40,7 +40,9 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')  
-    await client.change_presence(activity=discord.Game(name='おさかな天国'))
+    guilds = await client.fetch_guilds(limit=150).flatten()
+    text=f'{len(guilds)}匹でおさかな天国'
+    await client.change_presence(activity=discord.Game(name=text))
 
     
 @client.command()
