@@ -671,6 +671,15 @@ async def mt(ctx): #ラウンジの集計
         
     else:
         await ctx.send('エラー')
+        
+@client.command()
+async def test(ctx):
+    guilds = await client.fetch_guilds(limit=150).flatten()
+    print(len(guilds))
+    id = 704597398550478881
+    ch1 = client.get_channel(id) 
+    await ch1.send(len(guilds))
+ 
 
 """                       
 @client.command()
