@@ -7,6 +7,7 @@ from discord.ext import commands
 import gspread
 import json
 from oauth2client.service_account import ServiceAccountCredentials 
+import re
 
 #https://ja.wikipedia.org/wiki/Unicode%E3%81%AEEmoji%E3%81%AE%E4%B8%80%E8%A6%A7
 
@@ -30,6 +31,7 @@ gc = gspread.authorize(credentials)
 wb = gc.open_by_key(sheet)
 ws = wb.worksheet("挙手管理") 
 ws2 = wb.worksheet("メモ")
+ws3 = wb.worksheet("フレコ")
 
 botid=758555841296203827 #sakanabotのid
 
@@ -57,6 +59,42 @@ async def fish(ctx, about = "🐟🐟🐟 使い方 🐟🐟🐟"):
   help1 = discord.Embed(title=about,color=0xe74c3c,description=text)
   await ctx.send(embed=help1)       
 
+#-----------------------------------------------------
+
+@client.command()
+async def setfc(ctx): 
+    def check(m):
+        return m.author.id == ctx.author.id
+
+    if  ctx.author.bot == False:
+        try:
+            a=str(ctx.author.id)
+            list=ws3.col_values(1)
+            row=list.index(a)+1
+        except ValueError:
+            ws3.append_row([a])
+            list=ws3.col_values(1)
+            row=list.index(a)+1
+        
+        await ctx.send('フレンドコードを入力してください')
+        msg = await client.wait_for('message',check=check)
+        ws3.update_cell(row,2,msg.content)
+        await ctx.send('登録が完了しました')    
+
+#-----------------------------------------------------
+
+@client.command()
+async def fc(ctx,*n):
+    a=str(ctx.author.id)
+    if len(n)==1:
+        if '@' in n[0]:
+            a=re.sub("\\D", "", n[0])
+    list=ws3.col_values(1)
+    row=list.index(a)+1
+    msg = await ctx.send(ws3.cell(row,2).value) 
+    await asyncio.sleep(10)
+    await msg.delete()
+  
 #-----------------------------------------------------
 
 @client.command()
