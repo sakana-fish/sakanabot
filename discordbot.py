@@ -486,7 +486,7 @@ async def m(ctx,n): #.sの機能
         
 
 async def add(channel,row,n,name,mention):
-  """
+    """
     b=ws.range(row,1,row,24)
     if mention in b[n-11].value: #21→3,10,17
         b[n-18].value=b[n-18].value.replace(name,'')
@@ -501,7 +501,7 @@ async def add(channel,row,n,name,mention):
             await channel.send(f'{n}〆 {b[n-11].value}')
     
     ws.update_cells(b)
-  """
+    """
     b=ws.range(row,1,row,24)
     if mention in b[n-11].value: #21→3,10,17
         b[n-18].value=b[n-18].value.replace(name,f'({name})')
