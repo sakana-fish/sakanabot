@@ -510,7 +510,7 @@ async def add(channel,row,n,name,mention):
 
     else:
         if name in b[n-18].value:
-            b[n-18].value=b[n-18].value.replace(f'({name}) ','')
+            b[n-18].value=b[n-18].value.replace(f'({name}) ',' ')
         else:
             b[n-18].value += name
             b[n-11].value += mention
