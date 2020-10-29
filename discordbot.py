@@ -504,13 +504,13 @@ async def add(channel,row,n,name,mention):
     """
     b=ws.range(row,1,row,24)
     if mention in b[n-11].value: #21→3,10,17
-        b[n-18].value=b[n-18].value.replace(name,f'({name}) ')
+        b[n-18].value=b[n-18].value.replace(name,f'( {name}) ')
         b[n-11].value=b[n-11].value.replace(mention,'')
         b[n-4].value = int(b[n-4].value)+1
 
     else:
         if name in b[n-18].value:
-            b[n-18].value=b[n-18].value.replace(f'({name}) ',' ')
+            b[n-18].value=b[n-18].value.replace(f'( {name}) ',' ')
         else:
             b[n-18].value += name
             b[n-11].value += mention
