@@ -32,6 +32,7 @@ wb = gc.open_by_key(sheet)
 ws = wb.worksheet("挙手管理") 
 ws2 = wb.worksheet("メモ")
 ws3 = wb.worksheet("フレコ")
+ws4 = wb.worksheet("vote") 
 
 botid=758555841296203827 #sakanabotのid
 
@@ -210,9 +211,8 @@ async def div(ctx,*args):
     result2 +=str(i+1) + " | " + result + "\n"
   await ctx.send(result2)
  
-    
 @client.command()
-async def vote(ctx1):
+async def vote(ctx):
 
     def check(reaction, user):
         emoji = str(reaction.emoji)
@@ -222,110 +222,40 @@ async def vote(ctx1):
             return emoji
 
     def check3(m):
-      return m.author.id == ctx1.author.id        
-    test2 = discord.Embed(title="内容を入力してください",colour=0xe74c3c)
-    #test2.add_field(name=f"@{cn")
-    msg2 = await ctx1.send(embed=test2)
-    #await ctx1.send("内容を入力してください")
+      return m.author.id == ctx.author.id     
+
+    text = discord.Embed(title="内容を入力してください")
+    msg = await ctx.send(embed=text)
     about = await client.wait_for('message',check=check3)
-    about = about.content
-    #await ctx.send
-    await ctx1.channel.purge(limit=1)
-    test2 = discord.Embed(title="投票終了までの時間を入力してください(分)",colour=0xe74c3c)
-    await msg2.edit(embed=test2)
-    settime2 = await client.wait_for('message',check=check3)
-    settime2 = settime2.content   
-    await ctx1.channel.purge(limit=1)
-    #print(about)
-    settime2 = int(settime2)
-    about2 = "\n投票終了まで" + str(settime2) +"分"
-    settime2 = 60*settime2
-    #print(ctx1.author.name)
-    list = []
-    list2 = []
-    maru = 0
-    batu = 0
-    time = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))
-    #print(datetime.date.today(datetime.timezone(datetime.timedelta(hours=9))))
-    test2 = discord.Embed(title=about,colour=0xe74c3c)
-    test2.add_field(name=time,value=about2)
-    #test2.add_field(name=f"@{cn")
-    #msg2 = await ctx1.send(embed=test2)
-    await msg2.edit(embed=test2)
-    await msg2.add_reaction('🙆')
-    await msg2.add_reaction('🙅')
-    await msg2.add_reaction('↩')
-    await msg2.add_reaction('👋')
+    msg2 = about.content
+    await about.delete()
+    text = discord.Embed(title=f'{msg2}')
+    text.add_field(name='投票進行中',value=f'🙆:0 🙅:0',inline=False)
+    await msg.edit(embed=text)
+    await msg.edit(embed=text)
+    await msg.add_reaction('🙆')
+    await msg.add_reaction('🙅')
+    await msg.add_reaction('👋')
+
+    a=str(ctx.channel.id)
+    try:
+      list=ws4.col_values(1)
+      row=list.index(a)+1
+    except:
+      ws4.append_row([str(ctx.channel.id)])
+      list=ws4.col_values(1)
+      row=list.index(a)+1
+
+    b=ws.range(row,2,row,8)
+    b[0].value=str(msg.id)
+    b[1].value=str(ctx.author.id)
+    b[2].value=str(msg2)
+    b[3].value=''
+    b[4].value=''
+    b[5].value=0
+    b[6].value=0
     
-    check2 = 0
-
-    while check2 == 0:
-        try:
-            reaction, user = await client.wait_for('reaction_add', timeout=settime2, check=check)
-        except asyncio.TimeoutError:
-            #await msg2.delete()
-            await ctx1.send("投票終了時間")
-            break
-        else:
-            if msg2.id == reaction.message.id:
-                if str(reaction.emoji) == '🙆':
-                    if str(user.id) in str(list): 
-                      pass
-                      print("pass")
-                    elif str(user.id) in str(list2):
-                      #list += str(user.id) + " "
-                      list.append(user.id)
-                      maru += 1 
-                      batu -= 1
-                      list2.remove(user.id)                 
-                      #list2.replace(str(user.id),'')              
-                    else:
-                      #list += str(user.id)
-                      list.append(user.id)
-                      maru += 1 
-                elif str(reaction.emoji) == '🙅':
-                    if str(user.id) in str(list2):   
-                        pass
-                        print("pass")
-
-                    elif str(user.id) in str(list):
-                      #list2 += str(user.id) + " "
-                      list2.append(user.id)                      
-                      maru -= 1 
-                      batu += 1
-                      list.remove(user.id)                 
-                      #list.replace(str(user.id),'')
-                      #print(list,"\n",list2)
-                    else:                                   
-                      #list2 += str(user.id) 
-                      list2.append(user.id)
-                      batu += 1 
-                    
-                elif str(reaction.emoji) == '↩': 
-                    await msg2.delete()
-                    msg2 = await ctx1.send(embed=test2)  
-                    await msg2.add_reaction('🙆')
-                    await msg2.add_reaction('🙅')
-                    await msg2.add_reaction('↩')
-                    await msg2.add_reaction('👋')
-                    
-                elif str(reaction.emoji) == '👋': 
-                    if user.id == ctx1.author.id:
-                      #await msg2.delete()
-                      break     
-
-        print("OK") 
-        print(list,":1\n",list2,":2")                      
-        test2 = discord.Embed(title=about,colour=0xe74c3c,description="🙆:{} 🙅:{}".format(maru,batu))
-        test2.add_field(name=time,value=about2)
-
-        #test2.add_field("🙆{maru} 🙅{batu}")
-        await msg2.edit(embed=test2)
-        # リアクション消す。メッセージ管理権限がないとForbidden:エラーが出ます。
-        await msg2.remove_reaction(str(reaction.emoji), user)
-    
-    await ctx1.send(f"投票終了{ctx1.author.mention}")
-    
+    ws4.update_cells(b)
     
 @client.command()
 async def cal(ctx):
@@ -676,7 +606,54 @@ async def on_raw_reaction_add(payload):
                     msg2=await channel.send(f"21@{b[17]} 22@{b[18]} 23@{b[19]} 24@{b[20]}")
                 else:
                     msg2=await channel.send(f"20@{b[16]} 21@{b[17]} 22@{b[18]} 23@{b[19]} 24@{b[20]} 25@{b[21]} 26@{b[22]}")
-                ws.update_cell(row,25,str(msg2.id))    
+                ws.update_cell(row,25,str(msg2.id))
+                
+            else:
+                list=ws4.col_values(1)
+                try:
+                    row=list.index(str(payload.channel_id))+1
+                    b=ws4.row_values(row)
+                    if msg.id == int(b[1]): #.vote関連の時
+                        await msg.remove_reaction(str(payload.emoji),payload.member)
+                        
+                        if str(payload.emoji) == '🙆':
+                            if str(payload.member.id) in b[4]:
+                                pass
+                            else:
+                                b=ws4.range(row,4,row,8)
+                                if str(payload.member.id) in b[2].value:
+                                    b[2].value=b[2].value.replace(str(payload.member.id),'')
+                                    b[4].value=int(b[4].value)-1
+                                b[1].value=b[1].value+str(payload.member.id)
+                                b[3].value=int(b[3].value)+1
+                                ws4.update_cells(b)
+                                text = discord.Embed(title=f'{b[0].value}')
+                                text.add_field(name='投票進行中', value=f'🙆:{b[3].value} 🙅:{b[4].value}',inline=False)
+                                await msg.edit(embed=text)
+
+                        if str(payload.emoji) == '🙅':
+                            if str(payload.member.id) in b[5]:
+                                pass
+                            else:
+                                b=ws4.range(row,4,row,8)
+                                if str(payload.member.id) in b[1].value:
+                                    b[1].value=b[1].value.replace(str(payload.member.id),'')
+                                    b[3].value=int(b[3].value)-1
+                                b[2].value=b[2].value+str(payload.member.id)
+                                b[4].value=int(b[4].value)+1
+                                ws4.update_cells(b)
+                                text = discord.Embed(title=f'{b[0].value}')
+                                text.add_field(name='投票進行中', value=f'🙆:{b[3].value} 🙅:{b[4].value}',inline=False)
+                                await msg.edit(embed=text)
+
+                        if str(payload.emoji) == '👋':
+                            if b[2] == str(payload.member.id):
+                                ws4.delete_rows(row)
+                                text = discord.Embed(title=f'{b[3]}',color=0xff0000)
+                                text.add_field(name='投票終了', value=f'🙆:{b[6]} 🙅:{b[7]}',inline=False)
+                                await msg.edit(embed=text)                                                                
+                except:
+                    pass
                  
 #-----------------------------------------------------    
 @client.command()
