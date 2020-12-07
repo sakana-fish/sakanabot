@@ -50,13 +50,13 @@ async def on_ready():
     
 @client.command()
 async def suse(ctx): #.sの説明
-    text='交流戦挙手方法\n挙手: 指定時間に対応するスタンプ(↓↓↓)を押す\n挙手取り下げ: 取り下げる時間のスタンプを再び押す\n↩: 募集文をチャンネルの一番下に持ってくる\n🔁: 募集時間帯の切り替え(21~24 or 20~26)\n\n20→🇴 21→🇦 22→🇧 23→🇨 24→🇩 25→🇪 26→🇫'
+    text='交流戦挙手方法\n挙手: 指定時間に対応するスタンプ(↓↓↓)を押す\n補欠挙手に変更: 変更する時間のスタンプを再び押す\n挙手取り下げ: 取り下げる時間のスタンプを再び押す(挙手→補欠→取り下げのループ)\n↩: 募集文をチャンネルの一番下に持ってくる\n🔁: 募集時間帯の切り替え(21~24 or 20~26)\n\n20→🇴 21→🇦 22→🇧 23→🇨 24→🇩 25→🇪 26→🇫'
     await ctx.send(text)
     
     
 @client.command()
 async def fish(ctx, about = "🐟🐟🐟 使い方 🐟🐟🐟"):
-  text=".s: 交流戦募集開始※再び.sすることでリセット 英語スタンプ→の/へ\n.suse: .sの使い方\n.l <時間>: 指定時間に挙手した人の名前\n.m <時間>: 指定時間に挙手した人にメンション\n.cal: 即時集計。順位は16進数でも入力可、<recall>or<777>で呼び戻し、<end>で終了、<back>で一回分だけ修正可能\n.set <数字>: メモ登録\n.memo <数字> or <登録名>: メモ呼び出し\n.ran <数字>: ランダムに数字出力\n.div <数字> <リスト...>: 組み分け\n.choose <リスト...>: 選択\n.vote: 匿名アンケート(2択)\n.mt: ラウンジの集計\n作成者: さかな(@sakana8dx)\nさかなBot導入: https://discord.com/api/oauth2/authorize?client_id=758555841296203827&permissions=223296&scope=bot"
+  text=".s: 交流戦募集開始※再び.sすることでリセット 英語スタンプ→の/補欠/へ\n.suse: .sの使い方\n.l <時間>: 指定時間に挙手した人の名前\n.m <時間>: 指定時間に挙手した人にメンション\n.cal: 即時集計。順位は16進数でも入力可、<recall>or<777>で呼び戻し、<end>で終了、<back>で一回分だけ修正可能\n.set <数字>: メモ登録\n.memo <数字> or <登録名>: メモ呼び出し\n.ran <数字>: ランダムに数字出力\n.div <数字> <リスト...>: 組み分け\n.choose <リスト...>: 選択\n.vote: 匿名アンケート(2択)\n.mt: ラウンジの集計\n作成者: さかな(@sakana8dx)\nさかなBot導入: https://discord.com/api/oauth2/authorize?client_id=758555841296203827&permissions=223296&scope=bot"
   help1 = discord.Embed(title=about,color=0xe74c3c,description=text)
   await ctx.send(embed=help1)       
 
