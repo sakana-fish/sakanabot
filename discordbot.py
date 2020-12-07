@@ -963,9 +963,9 @@ async def on_raw_reaction_add(payload):
                             if b[2] == str(payload.member.id):
                                 ws5.delete_rows(row)
                                 text = discord.Embed(title=f'{b[3]}(投票終了)',color=0xff0000)
-                                text.add_field(name=f'🙆:{b[4].value}', value=f'{b[7].value}',inline=False)
-                                text.add_field(name=f'🤷:{b[5].value}', value=f'{b[8].value}',inline=False)
-                                text.add_field(name=f'🙅:{b[6].value}', value=f'{b[9].value}',inline=False)
+                                text.add_field(name=f'🙆:{b[7]}', value=f'{b[10]}',inline=False)
+                                text.add_field(name=f'🤷:{b[8]}', value=f'{b[11]}',inline=False)
+                                text.add_field(name=f'🙅:{b[9]}', value=f'{b[12]}',inline=False)
                                 await msg.edit(embed=text)   
 
                         if str(payload.emoji) == '📢':
