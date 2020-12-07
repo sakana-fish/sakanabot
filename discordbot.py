@@ -287,6 +287,8 @@ async def v2(ctx):
     await msg.add_reaction('🙅')
     await msg.add_reaction('👋')
     await msg.add_reaction('📢')
+    await msg.add_reaction('↩')
+
 
     a=str(ctx.channel.id)
     try:
@@ -969,6 +971,23 @@ async def on_raw_reaction_add(payload):
                         if str(payload.emoji) == '📢':
                             if b[2] == str(payload.member.id):
                                 await channel.send(b[13])
+                                                        
+                        if str(payload.emoji) == '↩':
+                            if b[2] == str(payload.member.id):
+                                await msg.delete()
+                                text = discord.Embed(title=f'{b[3]}')
+                                text.add_field(name=f'🙆:{b[7]}', value=f'{b[10]}',inline=False)
+                                text.add_field(name=f'🤷:{b[8]}', value=f'{b[11]}',inline=False)
+                                text.add_field(name=f'🙅:{b[9]}', value=f'{b[12]}',inline=False)
+                                msg = await channel.send(embed=text)
+                                ws5.update_cell(row,2,str(msg.id))
+                                await msg.add_reaction('🙆')
+                                await msg.add_reaction('🤷')
+                                await msg.add_reaction('🙅')
+                                await msg.add_reaction('👋')
+                                await msg.add_reaction('📢')
+                                await msg.add_reaction('↩')
+                                
                 except:
                     pass  
 
