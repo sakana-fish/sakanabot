@@ -33,6 +33,8 @@ ws = wb.worksheet("挙手管理")
 ws2 = wb.worksheet("メモ")
 ws3 = wb.worksheet("フレコ")
 ws4 = wb.worksheet("vote") 
+ws5 = wb.worksheet("vote2") 
+
 
 botid=758555841296203827 #sakanabotのid
 
@@ -212,7 +214,7 @@ async def div(ctx,*args):
   await ctx.send(result2)
  
 @client.command()
-async def vote(ctx):
+async def v(ctx):
 
     def check(reaction, user):
         emoji = str(reaction.emoji)
@@ -256,6 +258,62 @@ async def vote(ctx):
     b[6].value=0
     
     ws4.update_cells(b)
+
+
+@client.command()
+async def v2(ctx):
+
+    def check(reaction, user):
+        emoji = str(reaction.emoji)
+        if user.bot == True:    # botは無視
+            pass
+        else:          
+            return emoji
+
+    def check3(m):
+      return m.author.id == ctx.author.id     
+
+    text = discord.Embed(title="内容を入力してください")
+    msg = await ctx.send(embed=text)
+    about = await client.wait_for('message',check=check3)
+    msg2 = about.content
+    await about.delete()
+    text = discord.Embed(title=f'{msg2}')
+    text.add_field(name='投票進行中',value=f'🙆:0 🤷:0 🙅:0',inline=False)
+    await msg.edit(embed=text)
+    await msg.edit(embed=text)
+    await msg.add_reaction('🙆')
+    await msg.add_reaction('🤷')
+    await msg.add_reaction('🙅')
+    await msg.add_reaction('👋')
+    await msg.add_reaction('📢')
+
+    a=str(ctx.channel.id)
+    try:
+      list=ws5.col_values(1)
+      row=list.index(a)+1
+    except:
+      ws5.append_row([str(ctx.channel.id)])
+      list=ws5.col_values(1)
+      row=list.index(a)+1
+
+    b=ws5.range(row,2,row,14)
+    b[0].value=str(msg.id)
+    b[1].value=str(ctx.author.id)
+    b[2].value=str(msg2)
+    b[3].value='> '
+    b[4].value='> '
+    b[5].value='> '
+    b[6].value=0
+    b[7].value=0
+    b[8].value=0
+    b[9].value='> '
+    b[10].value='> '
+    b[11].value='> '
+    b[12].value='> '
+    
+    ws5.update_cells(b)
+    
     
 @client.command()
 async def cal(ctx):
@@ -496,7 +554,7 @@ async def s(ctx): #.sの機能
     ws.update_cell(row,2,str(msg.id))                
     ws.update_cell(row,25,str(msg2.id))                
 
-
+"""
 #-----------------------------------------------------
 @client.event  
 async def on_raw_reaction_add(payload):
@@ -654,7 +712,266 @@ async def on_raw_reaction_add(payload):
                                 await msg.edit(embed=text)                                                                
                 except:
                     pass
-                 
+"""
+#-----------------------------------------------------
+@client.event  
+async def on_raw_reaction_add(payload):
+    #print(payload.guild_id)
+    channel = client.get_channel(payload.channel_id)
+    msg=await channel.fetch_message(payload.message_id)
+    if msg.author.id == botid:
+        if payload.member.bot == False:
+            list=ws.col_values(1)
+            check=0
+            try:
+                row=list.index(str(payload.guild_id))+1
+                b=ws.row_values(row)
+                if msg.id == int(b[1]):
+                    check=1
+                    await msg.remove_reaction(str(payload.emoji),payload.member)
+                    name=payload.member.name+' '
+                    mention='<@!'+str(payload.member.id)+'>'+' '
+                    if str(payload.emoji) == '🇴':
+                        n=20
+                        await add(channel,row,n,name,mention)
+                    if str(payload.emoji) == '🇦':
+                        n=21
+                        await add(channel,row,n,name,mention)
+                    if str(payload.emoji) == '🇧':
+                        n=22
+                        await add(channel,row,n,name,mention)
+                    if str(payload.emoji) == '🇨':
+                        n=23
+                        await add(channel,row,n,name,mention)
+                    if str(payload.emoji) == '🇩':
+                        n=24
+                        await add(channel,row,n,name,mention)
+                    if str(payload.emoji) == '🇪':
+                        n=25
+                        await add(channel,row,n,name,mention)
+                    if str(payload.emoji) == '🇫':
+                        n=26
+                        await add(channel,row,n,name,mention)                   
+                        
+                    b=ws.row_values(row) #21→3,10,17
+                    now=datetime.datetime.now()
+                    month=now.month
+                    day=now.day
+                    text=f"交流戦募集 {month}月{day}日"
+                    test = discord.Embed(title=text,colour=0x1e90ff)
+                    if int(b[23])==2:
+                        test.add_field(name=f"20@{b[16]} ", value=b[2], inline=False)
+                    test.add_field(name=f"21@{b[17]} ", value=b[3], inline=False)
+                    test.add_field(name=f"22@{b[18]} ", value=b[4], inline=False)
+                    test.add_field(name=f"23@{b[19]} ", value=b[5], inline=False)
+                    test.add_field(name=f"24@{b[20]} ", value=b[6], inline=False)
+                    if int(b[23])==2:
+                        test.add_field(name=f"25@{b[21]} ", value=b[7], inline=False)
+                        test.add_field(name=f"26@{b[22]} ", value=b[8], inline=False)
+
+                    if str(payload.emoji) == '🔁':
+                        if int(b[23])==2:
+                            ws.update_cell(row,24,1)
+                            b[23]=1
+                        else:
+                            ws.update_cell(row,24,2)  
+                            b[23]=2
+                        await msg.delete()
+                        test = discord.Embed(title=text,colour=0x1e90ff)
+                        if int(b[23])==2:
+                            test.add_field(name=f"20@{b[16]} ", value=b[2], inline=False)
+                        test.add_field(name=f"21@{b[17]} ", value=b[3], inline=False)
+                        test.add_field(name=f"22@{b[18]} ", value=b[4], inline=False)
+                        test.add_field(name=f"23@{b[19]} ", value=b[5], inline=False)
+                        test.add_field(name=f"24@{b[20]} ", value=b[6], inline=False)
+                        if int(b[23])==2:
+                            test.add_field(name=f"25@{b[21]} ", value=b[7], inline=False)
+                            test.add_field(name=f"26@{b[22]} ", value=b[8], inline=False)
+                        msg = await channel.send(embed=test)
+                        if int(b[23])==2:
+                            await msg.add_reaction('🇴')
+                        await msg.add_reaction('🇦')
+                        await msg.add_reaction('🇧')
+                        await msg.add_reaction('🇨')
+                        await msg.add_reaction('🇩')
+                        if int(b[23])==2:
+                            await msg.add_reaction('🇪')
+                            await msg.add_reaction('🇫')
+                        await msg.add_reaction('↩')
+                        await msg.add_reaction('🔁')
+                        ws.update_cell(row,2,str(msg.id)) 
+
+                    if str(payload.emoji) == '↩':
+                        await msg.delete()
+                        msg = await channel.send(embed=test)
+                        if int(b[23])==2:
+                            await msg.add_reaction('🇴')
+                        await msg.add_reaction('🇦')
+                        await msg.add_reaction('🇧')
+                        await msg.add_reaction('🇨')
+                        await msg.add_reaction('🇩')
+                        if int(b[23])==2:
+                            await msg.add_reaction('🇪')
+                            await msg.add_reaction('🇫')
+                        await msg.add_reaction('↩')
+                        await msg.add_reaction('🔁')
+                        ws.update_cell(row,2,str(msg.id))
+                    else:
+                        await msg.edit(embed=test)
+
+                    msg2=await channel.fetch_message(int(b[24]))
+                    await msg2.delete()
+                    if int(b[23])==1:
+                        msg2=await channel.send(f"21@{b[17]} 22@{b[18]} 23@{b[19]} 24@{b[20]}")
+                    else:
+                        msg2=await channel.send(f"20@{b[16]} 21@{b[17]} 22@{b[18]} 23@{b[19]} 24@{b[20]} 25@{b[21]} 26@{b[22]}")
+                    ws.update_cell(row,25,str(msg2.id))
+            except:
+                    pass
+
+            if check==0:
+                list=ws4.col_values(1)
+                try:
+                    row=list.index(str(payload.channel_id))+1
+                    b=ws4.row_values(row)
+                    if msg.id == int(b[1]): #.vote関連の時
+                        await msg.remove_reaction(str(payload.emoji),payload.member)
+                        check=1
+
+                        if str(payload.emoji) == '🙆':
+                            if str(payload.member.id) in b[4]:
+                                pass
+                            else:
+                                b=ws4.range(row,4,row,8)
+                                if str(payload.member.id) in b[2].value:
+                                    b[2].value=b[2].value.replace(str(payload.member.id),'')
+                                    b[4].value=int(b[4].value)-1
+                                b[1].value=b[1].value+str(payload.member.id)
+                                b[3].value=int(b[3].value)+1
+                                ws4.update_cells(b)
+                                text = discord.Embed(title=f'{b[0].value}')
+                                text.add_field(name='投票進行中', value=f'🙆:{b[3].value} 🙅:{b[4].value}',inline=False)
+                                await msg.edit(embed=text)
+
+                        if str(payload.emoji) == '🙅':
+                            if str(payload.member.id) in b[5]:
+                                pass
+                            else:
+                                b=ws4.range(row,4,row,8)
+                                if str(payload.member.id) in b[1].value:
+                                    b[1].value=b[1].value.replace(str(payload.member.id),'')
+                                    b[3].value=int(b[3].value)-1
+                                b[2].value=b[2].value+str(payload.member.id)
+                                b[4].value=int(b[4].value)+1
+                                ws4.update_cells(b)
+                                text = discord.Embed(title=f'{b[0].value}')
+                                text.add_field(name='投票進行中', value=f'🙆:{b[3].value} 🙅:{b[4].value}',inline=False)
+                                await msg.edit(embed=text)
+
+                        if str(payload.emoji) == '👋':
+                            if b[2] == str(payload.member.id):
+                                ws4.delete_rows(row)
+                                text = discord.Embed(title=f'{b[3]}',color=0xff0000)
+                                text.add_field(name='投票終了', value=f'🙆:{b[6]} 🙅:{b[7]}',inline=False)
+                                await msg.edit(embed=text)                                                                
+                except:
+                    pass
+
+            if check==0:
+                list=ws5.col_values(1)
+                try:
+                    row=list.index(str(payload.channel_id))+1
+                    b=ws5.row_values(row)    
+                    if msg.id == int(b[1]): #.vote2関連の時
+                        await msg.remove_reaction(str(payload.emoji),payload.member)
+                        
+                        if str(payload.emoji) == '🙆':
+                            if str(payload.member.id) in b[4]:
+                                pass
+                            else:
+                                b=ws5.range(row,4,row,14)
+                                if str(payload.member.id) in b[2].value:
+                                    b[2].value=b[2].value.replace(str(payload.member.id),'')
+                                    b[8].value=b[8].value.replace(str(payload.member.name),'')
+                                    b[5].value=int(b[5].value)-1
+                                elif str(payload.member.id) in b[3].value:
+                                    b[3].value=b[3].value.replace(str(payload.member.id),'')
+                                    b[9].value=b[9].value.replace(str(payload.member.name),'')
+                                    b[6].value=int(b[6].value)-1
+                                b[1].value=b[1].value+str(payload.member.id)
+                                b[4].value=int(b[4].value)+1
+                                b[7].value=b[7].value+str(payload.member.name)
+                                b[10].value=b[10].value+str(payload.member.mention)
+                                ws5.update_cells(b)
+                                text = discord.Embed(title=f'{b[0].value}')
+                                text.add_field(name=f'🙆:{b[4].value}', value=f'{b[7].value}',inline=False)
+                                text.add_field(name=f'🤷:{b[5].value}', value=f'{b[8].value}',inline=False)
+                                text.add_field(name=f'🙅:{b[6].value}', value=f'{b[9].value}',inline=False)
+                                await msg.edit(embed=text)
+
+                        if str(payload.emoji) == '🤷':
+                            if str(payload.member.id) in b[5]:
+                                pass
+                            else:
+                                b=ws5.range(row,4,row,14)
+                                if str(payload.member.id) in b[3].value:
+                                    b[3].value=b[3].value.replace(str(payload.member.id),'')
+                                    b[9].value=b[9].value.replace(str(payload.member.name),'')
+                                    b[6].value=int(b[6].value)-1
+                                elif str(payload.member.id) in b[1].value:
+                                    b[1].value=b[1].value.replace(str(payload.member.id),'')
+                                    b[7].value=b[7].value.replace(str(payload.member.name),'')
+                                    b[10].value=b[10].value.replace(str(payload.member.mention),'')                                    
+                                    b[4].value=int(b[4].value)-1
+                                b[2].value=b[2].value+str(payload.member.id)
+                                b[5].value=int(b[5].value)+1
+                                b[8].value=b[8].value+str(payload.member.name)
+                                ws5.update_cells(b)
+                                text = discord.Embed(title=f'{b[0].value}')
+                                text.add_field(name=f'🙆:{b[4].value}', value=f'{b[7].value}',inline=False)
+                                text.add_field(name=f'🤷:{b[5].value}', value=f'{b[8].value}',inline=False)
+                                text.add_field(name=f'🙅:{b[6].value}', value=f'{b[9].value}',inline=False)
+                                await msg.edit(embed=text)
+
+                        if str(payload.emoji) == '🙅':
+                            if str(payload.member.id) in b[6]:
+                                pass
+                            else:
+                                b=ws5.range(row,4,row,14)
+                                if str(payload.member.id) in b[1].value:
+                                    b[1].value=b[1].value.replace(str(payload.member.id),'')
+                                    b[7].value=b[7].value.replace(str(payload.member.name),'')
+                                    b[10].value=b[10].value.replace(str(payload.member.mention),'')
+                                    b[4].value=int(b[4].value)-1
+                                elif str(payload.member.id) in b[2].value:
+                                    b[2].value=b[2].value.replace(str(payload.member.id),'')
+                                    b[8].value=b[8].value.replace(str(payload.member.name),'')
+                                    b[5].value=int(b[5].value)-1
+                                b[3].value=b[3].value+str(payload.member.id)
+                                b[6].value=int(b[6].value)+1
+                                b[9].value=b[9].value+str(payload.member.name)
+                                ws5.update_cells(b)
+                                text = discord.Embed(title=f'{b[0].value}')
+                                text.add_field(name=f'🙆:{b[4].value}', value=f'{b[7].value}',inline=False)
+                                text.add_field(name=f'🤷:{b[5].value}', value=f'{b[8].value}',inline=False)
+                                text.add_field(name=f'🙅:{b[6].value}', value=f'{b[9].value}',inline=False)
+                                await msg.edit(embed=text)
+
+                        if str(payload.emoji) == '👋':
+                            if b[2] == str(payload.member.id):
+                                ws5.delete_rows(row)
+                                text = discord.Embed(title=f'{b[3]}(投票終了)',color=0xff0000)
+                                text.add_field(name=f'🙆:{b[4].value}', value=f'{b[7].value}',inline=False)
+                                text.add_field(name=f'🤷:{b[5].value}', value=f'{b[8].value}',inline=False)
+                                text.add_field(name=f'🙅:{b[6].value}', value=f'{b[9].value}',inline=False)
+                                await msg.edit(embed=text)   
+
+                        if str(payload.emoji) == '📢':
+                            if b[2] == str(payload.member.id):
+                                await channel.send(b[13])
+                except:
+                    pass  
+
 #-----------------------------------------------------    
 @client.command()
 async def mt(ctx): #ラウンジの集計
