@@ -246,7 +246,7 @@ async def vote(ctx):
       list=ws4.col_values(1)
       row=list.index(a)+1
 
-    b=ws.range(row,2,row,8)
+    b=ws4.range(row,2,row,8)
     b[0].value=str(msg.id)
     b[1].value=str(ctx.author.id)
     b[2].value=str(msg2)
