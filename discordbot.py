@@ -316,144 +316,172 @@ async def v2(ctx):
     
     ws5.update_cells(b)
     
-    
 @client.command()
-async def cal(ctx):
-    
-  def check(m):
-    if m.channel.id != ctx.channel.id:
-        return False
-    return m.author.id == ctx.author.id
+async def cal(ctx,*enemy):
+    def check(m): 
+        return m.author.id == ctx.author.id
         
-  def is_int(s):
-    try:
-        int(s,16)
-        return True
-    except ValueError:
-        return False
-  def is_under12(b):
-    if all(elem < 13 for elem in b):
-        return True
-    else:
-        False
-
-  cal = discord.Embed(title="🐟即時集計🐟",color=0xe74c3c,description="0-0 @12")
-  result = await ctx.send(embed=cal)
-  moji = await ctx.send("結果を入力してください(recall or 777で一番上に、backで修正)")
-  msg = await ctx.send("🐟")
-  
-  f=0
-  g=0
-  h=''
-  j=0
-  while j!=12:
-    check1 = 0
-    while check1 == 0:
+    def is_int(s):
         try:
-            rank = await client.wait_for('message',timeout=900, check=check)
-        except asyncio.TimeoutError:        
-            await moji.delete()     
-            break
-        else:
-          #rank = await client.wait_for('message',check=check)    
-          a = rank.content
-          b = []      
-          if len(a)==6 or len(a)==7 or len(a)==8 or len(a)==9:
-            if a == 'recall':
-              await result.delete()
-              await moji.delete()
-              result = await ctx.send(embed=cal)
-              moji = await ctx.send("結果を入力してください(recall or 777で一番上に、backで修正)")
-              await rank.delete()
+            int(s,16)
+            return True
+        except ValueError:
+            return False
 
-            elif is_int(a)==True:
-              if len(a)==6:
-                for i in range(6):
-                    b.append(int(a[i],16))    
+    def is_under12(b):
+        return all(elem < 13 for elem in b)
+    
+    title='🐟即時集計🐟'
+    if len(enemy)==1:
+        enemy2=enemy[0]
+        title=f'🐟vs {enemy2}🐟'
+    
+    cal = discord.Embed(title=title,color=0xe74c3c,description="0-0 @12")
+    result = await ctx.send(embed=cal)
+    text='結果を入力してください(例:<123456>, <call> or <777>で一番上に, <back> or <333>で修正)'
+    moji = await ctx.send(text)
+    msg = await ctx.send('即時に新機能追加したよ！（宣伝）詳細は<.caluse>で！(21.1.9)🐟')
+    #msg = await ctx.send("🐟")
 
-              elif len(a)==7:
-                  for i in range(5):
-                      b.append(int(a[i]))
-                  b.append(int(a[5:]))
-
-              elif len(a)==8:
-                  for i in range(4):
-                      b.append(int(a[i]))
-                  b.append(int(a[4:6]))
-                  b.append(int(a[6:]))
-
-              elif len(a)==9:
-                  for i in range(3):
-                      b.append(int(a[i]))
-                  b.append(int(a[3:5]))
-                  b.append(int(a[5:7]))
-                  b.append(int(a[7:]))
-              await rank.delete()
-              if is_under12(b)==True:
-                    check1=1
-              else:
-                miss = await ctx.send("try again")
-                await asyncio.sleep(3)
-                await miss.delete()
+    f=0 #tatal
+    g=0 #enemytotal
+    h=''
+    j=0 #race
+    while j!=2:
+        ok1 = 0
+        while ok1 == 0:
+            try:
+                rank = await client.wait_for('message',timeout=900, check=check)
+            except asyncio.TimeoutError:        
+                await moji.delete()     
+                break
             else:
-              miss = await ctx.send("try again")
-              await asyncio.sleep(3)
-              await miss.delete()
+                a = rank.content
+                b = []      
+                if len(a)==6 or len(a)==7 or len(a)==8 or len(a)==9:
+                    if is_int(a)==True:
+                        await rank.delete()
+                        ok2=1
+                        try:
+                            if len(a)==6:
+                                for i in range(6):
+                                    b.append(int(a[i],16))    
 
-          elif a == 'end':              
-              await moji.delete()
-              await ctx.send("即時終了")
-              break
-          elif a == '.cal':
-              await moji.delete()                  
-              break          
-          elif a == '777':
-              await result.delete()
-              await moji.delete()
-              result = await ctx.send(embed=cal)
-              moji = await ctx.send("結果を入力してください(recall or 777で一番上に、backで修正)")
-              await rank.delete()
-          elif a == 'back':
-              h=h.replace(h2,'')
-              f-=d
-              g-=e              
-              k = str(f)+"-"+str(g)+"\t("+str(f-g)+")"
-              cal = discord.Embed(title="🐟即時集計🐟",color=0xe74c3c,description="{} @{}\n---------------------\n{}".format(k,11-j+2,h))    
-              await result.edit(embed=cal)
-              msg2 = await ctx.send("修正しました")
-              await asyncio.sleep(3)
-              await msg2.delete()
-              j-=1
-    
-    await msg.delete()    
-    c=str(b[0])+' '+str(b[1])+' '+str(b[2])+' '+str(b[3])+' '+str(b[4])+' '+str(b[5])
-    d=0
-    
-    for i in range(6):
-        point=b[i]
-        if point == 1:
-            point = 15
-        elif point == 2:
-            point = 12
-        else:
-            point = 13-point
-        d+=point
-    e=82-d
-    f+=d
-    g+=e
-    
-    h2= "race"+str(j+1).ljust(2)+" | "+str(d)+"-"+str(e)+" ("+str(d-e)+") | "+c+"\n"
-    h += h2
-    k = str(f)+"-"+str(g)+"\t("+str(f-g)+")"
-    cal = discord.Embed(title="🐟即時集計🐟",color=0xe74c3c,description="{} @{}\n---------------------\n{}".format(k,11-j,h))    
-    await result.edit(embed=cal)
-    msg = await ctx.send(h2)
-     
-    j+=1
-  await msg.delete()
-  await moji.delete()
-  await ctx.send("即時終了")
-         
+                            elif len(a)==7:
+                                for i in range(5):
+                                    b.append(int(a[i]))
+                                b.append(int(a[5:]))
+
+                            elif len(a)==8:
+                                for i in range(4):
+                                    b.append(int(a[i]))
+                                b.append(int(a[4:6]))
+                                b.append(int(a[6:]))
+
+                            elif len(a)==9:
+                                for i in range(3):
+                                    b.append(int(a[i]))
+                                b.append(int(a[3:5]))
+                                b.append(int(a[5:7]))
+                                b.append(int(a[7:]))
+                               
+                            else:
+                                await(await ctx.send("try again")).delete(delay=3)
+                                ok2=0
+
+                        except ValueError:
+                            await(await ctx.send("try again")).delete(delay=3)
+                            ok2=0
+                         
+                        if ok2==1:
+                            if is_under12(b)==True:
+                                ok1=1
+                            else:
+                                await(await ctx.send("try again")).delete(delay=3)                                   
+
+                elif a == 'back' or a == '333':
+                    await rank.delete()
+                    h=h.replace(h2,'')
+                    f-=d
+                    g-=e              
+                    k = str(f)+"-"+str(g)+"\t("+str(f-g)+")"
+                    cal = discord.Embed(title=title,color=0xe74c3c,description="{} @{}\n---------------------\n{}".format(k,11-j+2,h))    
+                    await result.edit(embed=cal)
+                    await(await ctx.send("修正しました")).delete(delay=3)
+                    j-=1    
+
+                elif a == 'call' or a == '777':
+                    await rank.delete()
+                    await result.delete()
+                    await moji.delete()
+                    result = await ctx.send(embed=cal)
+                    moji = await ctx.send(text)
+                        
+                elif a == 'end':              
+                    ok1=-1
+                    j=12
+                    await msg.delete()
+                    await moji.delete()
+                    await ctx.send("即時終了")
+
+                elif '.cal' in a:               
+                    ok1=-1
+                    j=12      
+                    await msg.delete()
+                    await moji.delete()   
+        
+        if ok1==1:
+            await msg.delete()   
+            c=str(b[0])+' '+str(b[1])+' '+str(b[2])+' '+str(b[3])+' '+str(b[4])+' '+str(b[5])
+            d=0 #こっちの追加点
+
+            for i in range(6):
+                point=b[i]
+                if point == 1:
+                    point = 15
+                elif point == 2:
+                    point = 12
+                else:
+                    point = 13-point
+                d+=point
+            e=82-d #あっちの追加点
+            f+=d
+            g+=e
+
+            h2= "race"+str(j+1).ljust(2)+" | "+str(d)+"-"+str(e)+" ("+str(d-e)+") | "+c+"\n"
+            h += h2
+            k = str(f)+"-"+str(g)+"\t("+str(f-g)+")"
+            cal = discord.Embed(title=title,color=0xe74c3c,description="{} @{}\n----------------------\n{}".format(k,11-j,h))    
+            await result.edit(embed=cal)
+            msg = await ctx.send(h2)   
+            j+=1
+
+    if ok1==1:
+        await msg.delete()
+        await moji.delete()
+        await ctx.send("即時終了")
+
+        if len(enemy)==1:
+            #try:
+                ch=client.get_channel(729490828619284581)
+                n=f-g
+                if n>0:
+                    text=f'win (+{n})'
+                elif n==0:
+                    text=f'draw'
+                elif n<0:
+                    text=f'lose ({n})'   
+                title=f'vs {enemy2} {text}' 
+                cal = discord.Embed(title=title,description=h)
+                for i in range(len(ctx.guild.channels)):
+                    if ctx.guild.channels[i].name=='戦績':
+                        await ctx.guild.channels[i].send(embed=cal)
+                        break
+
+@client.command()
+async def caluse(ctx):
+    text='.calによって作成した集計内容を #戦績 チャンネルへと転送する機能を追加しました.\n使い方\n1:「戦績」という名前のテキストチャンネルを作成します\n2: 集計開始時のコマンド入力を「.cal <敵チーム名>」とします.'
+    await ctx.send(text)
      
 @client.command()
 async def l(ctx,n): #.sの機能
