@@ -347,7 +347,7 @@ async def cal(ctx,*enemy):
     g=0 #enemytotal
     h=''
     j=0 #race
-    while j!=2:
+    while j!=12:
         ok1 = 0
         while ok1 == 0:
             try:
