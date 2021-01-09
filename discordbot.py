@@ -473,6 +473,7 @@ async def cal(ctx,*enemy):
                     text=f'lose ({n})'   
                 title=f'vs {enemy2} {text}' 
                 cal = discord.Embed(title=title,description=h)
+                await result.edit(embed=cal)
                 for i in range(len(ctx.guild.channels)):
                     if ctx.guild.channels[i].name=='戦績':
                         await ctx.guild.channels[i].send(embed=cal)
