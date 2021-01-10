@@ -8,6 +8,7 @@ import gspread
 import json
 from oauth2client.service_account import ServiceAccountCredentials 
 import re
+import requests
 
 #https://ja.wikipedia.org/wiki/Unicode%E3%81%AEEmoji%E3%81%AE%E4%B8%80%E8%A6%A7
 
@@ -1082,6 +1083,46 @@ async def test(ctx):
     ch1 = client.get_channel(id) 
     await ch1.send(len(guilds))
  
+@client.command()
+async def ta(ctx):
+    get_url_info = requests.get('https://mkwrs.com/mk8dx/wrs.php')
+    data=get_url_info.text.split('\n\n')
+    data=data[1]
+    data=data.split('display.php?track=')
+    j=0
+    pretrack='None'
+    text=''
+    for i in range(48):
+        if i==16:
+            text3=text
+            text=''
+        if i==32:
+            text2=text
+            text=''
+        ok=0
+        while(ok==0):
+            data2=data[j+1].split('\n')
+            track=re.search('>.*</a',data2[0])
+            track=track.group()
+            track=track.replace('>','')
+            track=track.replace('</a','')
+            if track!=pretrack:
+                time=re.search('\'',data2[1])
+                time=data2[1][time.start()-1:time.end()+6]
+                if i==40:
+                    timesec=data2[11][26:86]
+                else:
+                    timesec=data2[11][26:52]
+                timesec=timesec.replace("'",'')
+                text+=f'{i+1}: {track}| {time}  ({timesec})\n'
+                pretrack=track
+                ok=1
+            j+=1
+    msg=discord.Embed(title='WR')
+    msg.add_field(name=f'1', value=text3, inline=False)
+    msg.add_field(name=f'2', value=text2, inline=False)
+    msg.add_field(name=f'3', value=text, inline=False)
+    await ctx.send(embed=msg)
 
 """                       
 @client.command()
