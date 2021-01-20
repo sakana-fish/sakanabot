@@ -341,7 +341,7 @@ async def cal(ctx,*enemy):
     result = await ctx.send(embed=cal)
     text='結果を入力してください(例:<123456>, <call> or <777>で一番上に, <back> or <333>で修正)'
     moji = await ctx.send(text)
-    msg = await ctx.send('即時に新機能追加したよ！（宣伝）詳細は<.caluse>で！(21.1.9更新)🐟')
+    msg = await ctx.send('おすすめ機能は.vと.v2だよ！🐟')
     #msg = await ctx.send("🐟")
 
     f=0 #tatal
