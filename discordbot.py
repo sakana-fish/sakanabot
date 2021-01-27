@@ -59,7 +59,7 @@ async def suse(ctx): #.sの説明
     
 @client.command()
 async def fish(ctx, about = "🐟🐟🐟 使い方 🐟🐟🐟"):
-  text=".s: 交流戦募集開始※再び.sすることでリセット 英語スタンプ→の/補欠/へ\n.suse: .sの使い方\n.l <時間>: 指定時間に挙手した人の名前\n.m <時間>: 指定時間に挙手した人にメンション\n.cal: 即時集計。順位は16進数でも入力可(入力例:123456,1357911,789abc)、<call>or<777>で呼び戻し、<end>で終了、<back>or<333>で一回分だけ修正可能\n.set <数字>: メモ登録\n.memo <数字> or <登録名>: メモ呼び出し\n.ran <数字>: ランダムに数字出力\n.div <数字> <リスト...>: 組み分け\n.choose <リスト...>: 選択\n.v/.v2: 匿名or非匿名アンケート(2択)、募集者の👋で終了\n.mt: ラウンジの集計\n作成者: さかな(@sakana8dx)\nさかなBot導入: https://discord.com/api/oauth2/authorize?client_id=758555841296203827&permissions=223296&scope=bot"
+  text="`.s` : 交流戦募集開始※再び.sすることでリセット 英語スタンプ→の/補欠/へ\n`.suse` : .sの使い方\n`.l 時間` : 指定時間に挙手した人の名前\n`.m 時間` : 指定時間に挙手した人にメンション\n`.cal` : 即時集計。順位は16進数でも入力可(入力例:`123456`,`1357911`,`789abc`)、`call`or`777`で新着に、`end`で終了、`back`or`333`で一回分だけ修正可能\n`.set 数字` : メモ登録\n`.memo 数字 or 登録名` : メモ呼び出し\n`.ran 数字` : ランダムに数字出力\n`.div 数字 リスト...`: 組み分け\n`.choose リスト...` : 選択\n`.v/.v2` : 匿名or非匿名アンケート(2択)、募集者の👋で終了\n`.mt` : ラウンジの集計\n作成者:さかな(@sakana8dx)\nさかなBot導入: https://discord.com/api/oauth2/authorize?client_id=758555841296203827&permissions=223296&scope=bot"
   help1 = discord.Embed(title=about,color=0xe74c3c,description=text)
   await ctx.send(embed=help1)       
 
@@ -339,9 +339,9 @@ async def cal(ctx,*enemy):
     
     cal = discord.Embed(title=title,color=0xe74c3c,description="0-0 @12")
     result = await ctx.send(embed=cal)
-    text='結果を入力してください(例:<123456>, <call> or <777>で一番上に, <back> or <333>で修正)'
+    text='結果を入力してください(例:`123456`, `call` or `777`で一番上に, `back` or `333`で修正)'
     moji = await ctx.send(text)
-    msg = await ctx.send('おすすめ機能は.vと.v2だよ！🐟')
+    msg = await ctx.send('🐢')
     #msg = await ctx.send("🐟")
 
     f=0 #tatal
@@ -483,7 +483,7 @@ async def cal(ctx,*enemy):
 
 @client.command()
 async def caluse(ctx):
-    text='.calに敵チームをメモれるようにしました「.cal <敵チーム名>」\n＋α：「戦績」という名前のテキストチャンネルを作成しておくと、集計終了時に集計内容が自動で転送されます.'
+    text='.calに敵チームをメモれるようにしました「`.cal 敵チーム名`」\n＋α：「戦績」という名前のテキストチャンネルを作成しておくと、集計終了時に集計内容が自動で転送されます.'
     await ctx.send(text)
      
 @client.command()
