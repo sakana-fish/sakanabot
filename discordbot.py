@@ -47,7 +47,7 @@ async def on_ready():
     print(client.user.id)
     print('------')  
     guilds = await client.fetch_guilds(limit=150).flatten()
-    text=f'{len(guilds)}匹でおさかな天国'
+    text=f'使い方→.fish'
     await client.change_presence(activity=discord.Game(name=text))
 
     
@@ -341,7 +341,7 @@ async def cal(ctx,*enemy):
     result = await ctx.send(embed=cal)
     text='結果を入力してください(例:`123456`, `call` or `777`で一番上に, `back` or `333`で修正)'
     moji = await ctx.send(text)
-    msg = await ctx.send('🐢')
+    msg = await ctx.send('機能一覧は`.fish`で確認🐢')
     #msg = await ctx.send("🐟")
 
     f=0 #tatal
