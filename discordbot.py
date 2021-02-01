@@ -59,7 +59,7 @@ async def suse(ctx): #.sの説明
     
 @client.command()
 async def fish(ctx, about = "🐟🐟🐟 使い方 🐟🐟🐟"):
-  text="`.s` : 交流戦募集開始※再び.sすることでリセット 英語スタンプ→の/補欠/へ\n`.suse` : .sの使い方\n`.l 時間` : 指定時間に挙手した人の名前\n`.m 時間` : 指定時間に挙手した人にメンション\n`.cal` : 即時集計。順位は16進数でも入力可(入力例:`123456`,`1357911`,`789abc`)、`call`or`777`で新着に、`end`で終了、`back`or`333`で一回分だけ修正可能\n`.set 数字` : メモ登録\n`.memo 数字 or 登録名` : メモ呼び出し\n`.ran 数字` : ランダムに数字出力\n`.div 数字 リスト...`: 組み分け\n`.choose リスト...` : 選択\n`.v/.v2` : 匿名or非匿名アンケート(2択)、募集者の👋で終了\n`.mt` : ラウンジの集計\n作成者:さかな(@sakana8dx)\nさかなBot導入: https://discord.com/api/oauth2/authorize?client_id=758555841296203827&permissions=223296&scope=bot"
+  text="`.s` : 交流戦募集開始※再び.sすることでリセット 英語スタンプ→の/補欠/へ\n`.suse` : .sの使い方\n`.l 時間` : 指定時間に挙手した人の名前\n`.m 時間` : 指定時間に挙手した人にメンション\n`.cal` : 即時集計。順位は16進数でも入力可(入力例:`123456`,`1357911`,`789abc`)、`call`or`777`で新着に、`end`で終了、`back`or`333`で一回分だけ修正可能\n`.set 数字` : メモ登録\n`.memo 数字 or 登録名` : メモ呼び出し\n`.ran 数字` : ランダムに数字出力\n`.div 数字 リスト...`: 組み分け(例:`.div 3 a b c d e f g h`)\n`.chs リスト...` : 選択(例:`.chs a b c`)\n`.v/.v2` : 匿名or非匿名アンケート(2択)、募集者の👋で終了\n`.mt` : ラウンジの集計\n作成者:さかな(@sakana8dx)\nさかなBot導入: https://discord.com/api/oauth2/authorize?client_id=758555841296203827&permissions=223296&scope=bot"
   help1 = discord.Embed(title=about,color=0xe74c3c,description=text)
   await ctx.send(embed=help1)       
 
@@ -183,36 +183,37 @@ async def ran(ctx,arg):
 
     
 @client.command()
-async def choose(ctx,*args):
+async def chs(ctx,*args):
   b=len(args)
   await ctx.send(args[random.randrange(b)])
 
     
 @client.command()
 async def div(ctx,*args):
-  a=int(args[0])
-  b=len(args)-1
-  c=b%a
-  list = []
-  #print(a,b,c,list,"\n")
+    a=int(args[0])
+    b=len(args)-1
+    #a=3
+    #b=10
+    c=b//a
+    d=b%a
 
-  for i in range(b):
-    list.append(args[i+1])
-  result2 = ''
-  for i in range(a):
-    result = ''
-    for j in range(b//a):
-      d = list[random.randrange(len(list))]
-      result += str(d)+" "
-      #print(result,list,"\n")
-      list.remove(d)       
-      if c!= 0 :
-        d = list[random.randrange(len(list))]
-        result += str(d)+" "
-        list.remove(d)   
-        c -= 1
-    result2 +=str(i+1) + " | " + result + "\n"
-  await ctx.send(result2)
+    rand=list(range(0,b))
+    rand=random.sample(rand,b)
+    text=''
+    text2=''
+    k=0
+    
+    for i in range(a):
+        text3=''
+        for j in range(c):
+            text3+=f'{args[rand[k]+1]} '
+            k+=1
+        if d!=0:
+            text3+=f'{args[rand[k]+1]} '
+            k+=1
+            d-=1
+        text2+=f'{i+1}|{text3}\n'
+    await ctx.send(text2)
  
 @client.command()
 async def v(ctx):
