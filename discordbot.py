@@ -690,37 +690,7 @@ async def on_raw_reaction_add(payload):
                     else:
                         msg2=await channel.send(f"20@{b[16]} 21@{b[17]} 22@{b[18]} 23@{b[19]} 24@{b[20]} 25@{b[21]} 26@{b[22]}")
                     ws.update_cell(row,25,str(msg2.id))
-                    """
                     if flag==1:
-                        b=b[n-11].split(' ')
-                        list=ws6.col_values(1)
-                        row=list.index(str(payload.guild_id))+1
-                        c=ws6.row_values(row)
-                        for i in range(6):
-                            try:
-                                col=c.index(b[i])+1
-                            except:
-                                c.append(b[i])
-                                c.append('1')
-                            else:
-                                c[col]=int(c[col])+1
-                        area=ws6.range(row,1,row,100)
-                        for i in range(len(c)):
-                            area[i].value=c[i]
-                        ws6.update_cells(area)
-                        channel = client.get_channel(int(c[1]))
-                        msg=await channel.fetch_message(int(c[2]))
-                        text=''
-                        for i in range((len(c)-3)/2):
-                            text+=f'{c[i+3]}:{c[i+4]}\t'
-                            print(text)
-                        msg2 = discord.Embed(title=f'挙手回数 {c[3]}~',description=text,colour=0x1a8e22)
-                        await msg.edit(embed=msg2)
-                        """
-            except:
-                    pass
-            else:
-                if flag==1:
                         b=b[n-11].split(' ')
                         list=ws6.col_values(1)
                         row=list.index(str(payload.guild_id))+1
@@ -752,6 +722,9 @@ async def on_raw_reaction_add(payload):
                         msg2 = discord.Embed(title=f'挙手回数 {c[3]}~',description=text,colour=0x1a8e22)
                         await msg.edit(embed=msg2)
 
+            except:
+                    pass
+                
             if check==0:
                 list=ws4.col_values(1)
                 try:
@@ -981,8 +954,6 @@ async def reset(ctx): #.sの機能
         row=list.index(a)+1
         ws.update_cell(row,27,1)                  
     ws6.append_row([str(ctx.guild.id),str(ctx.channel.id),str(msg.id),text])    
-        
-
 
 """                       
 @client.command()
