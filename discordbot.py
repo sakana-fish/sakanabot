@@ -719,7 +719,7 @@ async def on_raw_reaction_add(payload):
                         print(d)
                         for i in range(num):
                             text+=f'{d[i][0]}:{d[i][1]}\t'
-                        msg2 = discord.Embed(title=f'挙手回数 {c[3]}~',description=text,colour=0x1a8e22)
+                        msg2 = discord.Embed(title=f'挙手回数 from {c[3]}',description=text,colour=0x1a8e22)
                         await msg.edit(embed=msg2)
 
             except:
