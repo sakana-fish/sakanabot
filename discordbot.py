@@ -543,7 +543,7 @@ async def s(ctx): #.sの機能
       #for i in range(22):
       #ws.update_cell(row,23,0)
 
-    b=ws.range(row,3,row,26)
+    b=ws.range(row,3,row,27)
     #b=ws.row_values(row)
     for i in range(7):
         b[i].value='> '
@@ -557,6 +557,7 @@ async def s(ctx): #.sの機能
     day=now.day
     text=f"{month}月{day}日"
     b[23].value=text
+    b[24].value=0
     ws.update_cells(b)
     
     text=f"交流戦募集 {month}月{day}日" 
