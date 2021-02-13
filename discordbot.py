@@ -955,6 +955,68 @@ async def reset(ctx): #.sの機能
         ws.update_cell(row,27,1)                  
     ws6.append_row([str(ctx.guild.id),str(ctx.channel.id),str(msg.id),text])    
 
+
+@client.command()
+async def minus(ctx,*b): #.sの機能
+    list=ws6.col_values(1)
+    row=list.index(str(ctx.guild.id))+1
+    c=ws6.row_values(row)
+    for i in range(len(b)):
+        try:
+            col=c.index(str(b[i]))+1
+        except:
+            c.append(b[i])
+            c.append('1')
+        else:
+            c[col]=int(c[col])-1
+    area=ws6.range(row,1,row,100)
+    for i in range(len(c)):
+        area[i].value=c[i]
+    ws6.update_cells(area)
+    channel = client.get_channel(int(c[1]))
+    msg=await channel.fetch_message(int(c[2]))
+    text=''
+    num=int((len(c)-4)//2)
+    d=[]
+    for i in range(num):
+        d.append([c[2*i+4],int(c[2*i+5])])
+    d=sorted(d, reverse=True, key=lambda x: x[1])
+    for i in range(num):
+        text+=f'{d[i][0]}:{d[i][1]}\t'
+    msg2 = discord.Embed(title=f'挙手回数 {c[3]}~',description=text,colour=0x1a8e22)
+    await msg.edit(embed=msg2)
+
+@client.command()
+async def plus(ctx,*b): #.sの機能
+    list=ws6.col_values(1)
+    row=list.index(str(ctx.guild.id))+1
+    c=ws6.row_values(row)
+    for i in range(len(b)):
+        try:
+            col=c.index(str(b[i]))+1
+        except:
+            c.append(b[i])
+            c.append('1')
+        else:
+            c[col]=int(c[col])+1
+    area=ws6.range(row,1,row,100)
+    for i in range(len(c)):
+        area[i].value=c[i]
+    ws6.update_cells(area)
+    channel = client.get_channel(int(c[1]))
+    msg=await channel.fetch_message(int(c[2]))
+    text=''
+    num=int((len(c)-4)//2)
+    d=[]
+    for i in range(num):
+        d.append([c[2*i+4],int(c[2*i+5])])
+    d=sorted(d, reverse=True, key=lambda x: x[1])
+    for i in range(num):
+        text+=f'{d[i][0]}:{d[i][1]}\t'
+    msg2 = discord.Embed(title=f'挙手回数 {c[3]}~',description=text,colour=0x1a8e22)
+    await msg.edit(embed=msg2)
+    
+    
 """                       
 @client.command()
 async def fish2(ctx, about = "🐟🐟🐟 戦績記録使い方 🐟🐟🐟"):
