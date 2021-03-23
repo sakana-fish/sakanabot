@@ -1018,7 +1018,7 @@ async def plus(ctx,*b): #.sの機能
     
 @client.command()
 async def t(ctx):
-    if ctx.author.id==322341906808045568: 
+    if ctx.author.id==322341906808045568 and ctx.guild.id==704597398550478878: 
         guilds=client.guilds
         #for i in range(len(guilds)):
         #    print(guilds[i])
@@ -1026,7 +1026,7 @@ async def t(ctx):
 
 @client.command()
 async def t2(ctx):
-    if ctx.author.id==322341906808045568: 
+    if ctx.author.id==322341906808045568 and ctx.guild.id==704597398550478878: 
         guilds=client.guilds
         a=len(guilds)
         b=a//20
