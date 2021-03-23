@@ -1016,6 +1016,34 @@ async def plus(ctx,*b): #.sの機能
     msg2 = discord.Embed(title=f'挙手回数 {c[3]}~',description=text,colour=0x1a8e22)
     await msg.edit(embed=msg2)
     
+@client.command()
+async def t(ctx):
+    if ctx.author.id==322341906808045568: 
+        guilds=client.guilds
+        #for i in range(len(guilds)):
+        #    print(guilds[i])
+        await ctx.send(len(guilds))
+
+@client.command()
+async def t2(ctx):
+    if ctx.author.id==322341906808045568: 
+        guilds=client.guilds
+        a=len(guilds)
+        b=a//20
+        c=a%20
+        k=0
+        for j in range(b):
+            text=''
+            for i in range(20):
+                text+=f'{guilds[k]}\n'
+                k+=1    
+            await ctx.send(text)
+        text=''
+        for i in range(c):
+            text+=f'{guilds[k]}\n'
+            k+=1    
+        await ctx.send(text)
+        await ctx.send(len(guilds))
     
 """                       
 @client.command()
