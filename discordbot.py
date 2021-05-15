@@ -238,9 +238,11 @@ async def v(ctx):
     text.add_field(name='投票進行中',value=f'🙆:0 🙅:0',inline=False)
     await msg.edit(embed=text)
     await msg.edit(embed=text)
-    await msg.add_reaction('🙆')
-    await msg.add_reaction('🙅')
-    await msg.add_reaction('👋')
+    for reaction in ["🙆", "🙅", "👋"]:
+      await msg.add_reaction(reaction)
+    #await msg.add_reaction('🙆')
+    #await msg.add_reaction('🙅')
+    #await msg.add_reaction('👋')
 
     a=str(ctx.channel.id)
     try:
@@ -285,12 +287,14 @@ async def v2(ctx):
     text.add_field(name='投票進行中',value=f'🙆:0 🤷:0 🙅:0',inline=False)
     await msg.edit(embed=text)
     await msg.edit(embed=text)
-    await msg.add_reaction('🙆')
-    await msg.add_reaction('🤷')
-    await msg.add_reaction('🙅')
-    await msg.add_reaction('👋')
-    await msg.add_reaction('📢')
-    await msg.add_reaction('↩')
+    for reaction in ["🙆", "🤷", "🙅", "👋", "📢", "↩"]:
+      await msg.add_reaction(reaction)
+    #await msg.add_reaction('🙆')
+    #await msg.add_reaction('🤷')
+    #await msg.add_reaction('🙅')
+    #await msg.add_reaction('👋')
+    #await msg.add_reaction('📢')
+    #await msg.add_reaction('↩')
 
 
     a=str(ctx.channel.id)
@@ -566,12 +570,15 @@ async def s(ctx): #.sの機能
     test.add_field(name=f"23@6 ", value='>', inline=False)
     test.add_field(name=f"24@6 ", value='>', inline=False)
     msg = await ctx.send(embed=test)
-    await msg.add_reaction('🇦')
-    await msg.add_reaction('🇧')
-    await msg.add_reaction('🇨')
-    await msg.add_reaction('🇩')
-    await msg.add_reaction('↩')
-    await msg.add_reaction('🔁')
+    for reaction in ["🇦", "🇧", "🇨", "🇩", "↩", "🔁"]:
+      await msg.add_reaction(reaction)
+    #await msg.add_reaction('🇦')
+    #await msg.add_reaction('🇧')
+    #await msg.add_reaction('🇨')
+    #await msg.add_reaction('🇩')
+    #await msg.add_reaction('↩')
+    #await msg.add_reaction('🔁')
+    
     msg2=await ctx.send(f"21@6 22@6 23@6 24@6")
     ws.update_cell(row,2,str(msg.id))                
     ws.update_cell(row,25,str(msg2.id))                
@@ -875,12 +882,14 @@ async def on_raw_reaction_add(payload):
                                 text.add_field(name=f'🙅:{b[9]}', value=f'{b[12]}',inline=False)
                                 msg = await channel.send(embed=text)
                                 ws5.update_cell(row,2,str(msg.id))
-                                await msg.add_reaction('🙆')
-                                await msg.add_reaction('🤷')
-                                await msg.add_reaction('🙅')
-                                await msg.add_reaction('👋')
-                                await msg.add_reaction('📢')
-                                await msg.add_reaction('↩')
+                                for reaction in ["🙆", "🤷", "🙅", "👋", "📢", "↩"]:
+                                  await msg.add_reaction(reaction)
+                                #await msg.add_reaction('🙆')
+                                #await msg.add_reaction('🤷')
+                                #await msg.add_reaction('🙅')
+                                #await msg.add_reaction('👋')
+                                #await msg.add_reaction('📢')
+                                #await msg.add_reaction('↩')
                                 
                 except:
                     pass  
