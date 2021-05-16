@@ -9,6 +9,7 @@ import json
 from oauth2client.service_account import ServiceAccountCredentials 
 import re
 import requests
+import tweepy
 
 #https://ja.wikipedia.org/wiki/Unicode%E3%81%AEEmoji%E3%81%AE%E4%B8%80%E8%A6%A7
 
@@ -37,6 +38,17 @@ ws4 = wb.worksheet("vote")
 ws5 = wb.worksheet("vote2") 
 ws6 = wb.worksheet("挙手数") 
 
+###twitter
+#keyの設定
+CONSUMER_KEY = os.environ['CONSUMER_KEY']
+CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
+ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
+
+auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+# OAuth認証
+api = tweepy.API(auth)
 
 botid=758555841296203827 #sakanabotのid
 
@@ -56,13 +68,89 @@ async def on_ready():
 async def suse(ctx): #.sの説明
     text='交流戦挙手方法\n挙手: 指定時間に対応するスタンプ(↓↓↓)を押す\n補欠挙手に変更: 変更する時間のスタンプを再び押す\n挙手取り下げ: 取り下げる時間のスタンプを再び押す(挙手→補欠→取り下げのループ)\n↩: 募集文をチャンネルの一番下に持ってくる\n🔁: 募集時間帯の切り替え(21~24 or 20~26)\n\n20→🇴 21→🇦 22→🇧 23→🇨 24→🇩 25→🇪 26→🇫'
     await ctx.send(text)
-    
+
+#-----------------------------------------------------
     
 @client.command()
 async def fish(ctx, about = "🐟🐟🐟 使い方 🐟🐟🐟"):
   text="`.s` : 交流戦募集開始※再び.sすることでリセット 英語スタンプ→の/補欠/へ\n`.suse` : .sの使い方\n`.l 時間` : 指定時間に挙手した人の名前\n`.m 時間` : 指定時間に挙手した人にメンション\n`.cal` : 即時集計。順位は16進数でも入力可(入力例:`123456`,`1357911`,`789abc`)、`call`or`777`で新着に、`end`で終了、`back`or`333`で一回分だけ修正可能\n`.reset` : 挙手回数カウント、再度.resetでカウントリセット\n`.set 数字` : メモ登録\n`.memo 数字 or 登録名` : メモ呼び出し\n`.ran 数字` : ランダムに数字出力\n`.div 数字 リスト...`: 組み分け(例:`.div 3 a b c d e f g h`)\n`.chs リスト...` : 選択(例:`.chs a b c`)\n`.v/.v2` : 匿名or非匿名アンケート(2択)、募集者の👋で終了\n作成者:さかな(@sakana8dx)\nさかなBot導入: https://discord.com/api/oauth2/authorize?client_id=758555841296203827&permissions=223296&scope=bot"
   help1 = discord.Embed(title=about,color=0xe74c3c,description=text)
   await ctx.send(embed=help1)       
+
+#-----------------------------------------------------
+
+@client.command()
+async def mkmg(ctx,*words): #mkmg監視, wordsはNGワード
+    ok=0
+    for channel in ctx.guild.channels:
+        if channel.name=='さかなbot':
+            ch=channel
+            ok=1
+    if ok==0: #「検索」チャンネルがなかったら
+        await ctx.send('監視機能を利用する場合, テキストチャンネル`さかなbot`を作成してください')
+    else:
+        text=f'<#{ch.id}>\n監視を終了する場合⏹を押してください\n監視時間を延長する場合🔁を押してください'
+        if len(words)!=0:
+            NG=''
+            for word in words:
+                NG+=f'{word} '
+            text+=f'\nNGワード: {NG}'
+        text2=discord.Embed(title='mkmg監視中', description=f'残り約{300}秒\n{text}')
+        msg=await ctx.send(embed=text2)
+        await msg.add_reaction('⏹')
+        await msg.add_reaction('🔁')
+        
+        count=10
+        q_word="#mkmg"
+        tweet_ids=''
+        while(ok!=2):
+            for i in range(60):
+                #検索
+                ok=1
+                msg2 = await ctx.channel.fetch_message(msg.id)
+                reactions = msg2.reactions
+                for reaction in reactions:
+                    if reaction.emoji=='⏹' and reaction.count!=1:
+                        ok=2
+                        break
+                    elif reaction.emoji=='🔁' and reaction.count!=1:
+                        await msg.clear_reaction("🔁")
+                        await msg.add_reaction('🔁')
+                        ok=0
+                        break
+
+                if ok==1:
+                    search_result = api.search(q=q_word, count=count)
+                    for result in search_result:
+                        retweet = result.retweet_count
+                        if retweet == 0:
+                            tweet_id = result.id
+                            if str(tweet_id) in str(tweet_ids):
+                                break
+                            else:
+                                content = result.text
+                                ok2=1
+                                if len(words)!=0:
+                                    for word in words:
+                                        if word in content:
+                                            ok2=0
+                                            break
+                                if ok2==1:
+                                    tweet_ids+=str(tweet_id)
+                                    screen_id = result.user.screen_name
+                                    await ch.send("https://twitter.com/{}/status/{}".format(screen_id,tweet_id))
+                    
+                    if i!=0 and i%6==0:
+                        text2=discord.Embed(title='mkmg監視中', description=f'残り約{300-5*i}秒\n{text}')
+                        await msg.edit(embed=text2)
+                    await asyncio.sleep(5)
+                    if i==59:
+                        ok=2
+                else:
+                    break
+
+        await msg.delete()
+        await ctx.send(f'監視終了 {ctx.author.mention}')
 
 #-----------------------------------------------------
 
